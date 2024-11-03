@@ -1,46 +1,33 @@
-# Getting Started with Create React App
+# Projeto BarberTech
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto é uma aplicação para gerenciar um sistema de barbearia, com funcionalidades para login, 
 
-## Available Scripts
+criação de conta e autenticação de usuários (clientes e barbeiros).
 
-In the project directory, you can run:
+### Sumário
+### Tecnologias Utilizadas
+### Configuração do Ambiente
+# Front-End
+# Back-End
 
-### `npm start`
+Bibliotecas e Dependências
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Tecnologias Utilizadas
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Front-End: React, TailwindCSS, Axios
 
-### `npm test`
+Back-End: .NET 6 (ASP.NET Minimal API), Entity Framework Core
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Banco de Dados: SQLite (ou outro de sua preferência)
 
-### `npm run build`
+Configuração do Ambiente
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Pré-requisitos
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Node.js e npm para o front-end
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+.NET SDK para o back-end
 
-### `npm run eject`
+Banco de Dados: O projeto está configurado para usar SQLite, mas você pode configurar outro banco no 
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+AppDbContext.

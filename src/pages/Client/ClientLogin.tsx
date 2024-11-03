@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const ClientLogin: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica de autenticação para o cliente aqui
-    navigate('/client-dashboard');
+    
+    try {
+      const response = await axios.post('https://localhost:5400/login', {
+        Username: email,
+        Password: password,
+      });
+
+      if (response.status === 200) {
+        const { token } = response.data;
+        localStorage.setItem('token', token); // Salva o token no localStorage
+        navigate('/client-dashboard');
+      }
+    } catch (err) {
+      setError('Usuário ou senha incorretos');
+      console.error(err);
+    }
   };
 
   const handleSignupRedirect = () => {
@@ -24,8 +42,10 @@ const ClientLogin: React.FC = () => {
             Email
           </label>
           <input
-            type="email"
+            type="text"
             id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             placeholder="Digite seu email"
             required
@@ -39,11 +59,15 @@ const ClientLogin: React.FC = () => {
           <input
             type="password"
             id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             placeholder="Digite sua senha"
             required
           />
         </div>
+
+        {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
         
         <button
           type="submit"
