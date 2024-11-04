@@ -12,8 +12,8 @@ const BarberManagement: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [specialty, setSpecialty] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [filter, setFilter] = useState<string>(''); // Para o filtro
-  const [showList, setShowList] = useState<boolean>(false); // Para mostrar/ocultar lista
+  const [filter, setFilter] = useState<string>(''); 
+  const [showList, setShowList] = useState<boolean>(false); 
   const [error, setError] = useState<string>('');
 
   const handleAddBarber = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +30,7 @@ const BarberManagement: React.FC = () => {
       setName('');
       setSpecialty('');
       setPassword('');
-      setError(''); // Limpa a mensagem de erro ao adicionar com sucesso
+      setError('');
     } catch (err) {
       setError('Erro ao adicionar barbeiro. Verifique os dados.');
       console.error(err);
@@ -62,7 +62,6 @@ const BarberManagement: React.FC = () => {
     barber.nome.toLowerCase().includes(filter.toLowerCase())
   );
 
-  // Efeito para limpar mensagem de erro ao preencher os campos
   useEffect(() => {
     if (name || specialty || password) {
       setError('');
