@@ -9,7 +9,7 @@ type Servico = {
   preco: number;
 };
 
-const API_BASE_URL = "http://localhost:5400";
+const API_BASE_URL = "https://localhost:5400";
 
 const ServiceManagement: React.FC = () => {
   const [servicos, setServicos] = useState<Servico[]>([]);
@@ -27,18 +27,36 @@ const ServiceManagement: React.FC = () => {
       setServicos(response.data);
     } catch (error) {
       setErrorMessage("Erro ao carregar serviços.");
+      setTimeout(() => setErrorMessage(""), 3000); // Limpa a mensagem após 3 segundos
     }
   };
 
-  const addServico = async () => {
+  const addServico = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validações
+    if (!nome || !preco) {
+      setErrorMessage("Por favor, preencha todos os campos.");
+      setTimeout(() => setErrorMessage(""), 3000); // Limpa a mensagem após 3 segundos
+      return;
+    }
+
+    const precoNum = parseFloat(preco);
+    if (isNaN(precoNum) || precoNum <= 0) {
+      setErrorMessage("Por favor, insira um preço válido.");
+      setTimeout(() => setErrorMessage(""), 3000); // Limpa a mensagem após 3 segundos
+      return;
+    }
+
     try {
-      await axios.post(`${API_BASE_URL}/servico`, { nome, preco: parseFloat(preco) });
+      await axios.post(`${API_BASE_URL}/servico`, { nome, preco: precoNum });
       fetchServicos();
       setNome("");
       setPreco("");
       setErrorMessage("");
     } catch (error: any) {
       setErrorMessage(error.response?.data || "Erro ao adicionar serviço.");
+      setTimeout(() => setErrorMessage(""), 3000); // Limpa a mensagem após 3 segundos
     }
   };
 
@@ -48,6 +66,7 @@ const ServiceManagement: React.FC = () => {
       fetchServicos();
     } catch (error) {
       setErrorMessage("Erro ao deletar serviço.");
+      setTimeout(() => setErrorMessage(""), 3000); // Limpa a mensagem após 3 segundos
     }
   };
 
@@ -57,38 +76,56 @@ const ServiceManagement: React.FC = () => {
       fetchServicos();
     } catch (error) {
       setErrorMessage("Erro ao atualizar serviço.");
+      setTimeout(() => setErrorMessage(""), 3000); // Limpa a mensagem após 3 segundos
     }
   };
 
   return (
-    <div className="w-full max-w-lg p-4 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-semibold mb-4">Gerenciamento de Serviços</h2>
+    <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Gerenciamento de Serviços</h2>
+      
+      <form onSubmit={addServico} className="w-full space-y-4">
+        <div>
+          <label htmlFor="nome" className="block text-gray-600 font-semibold mb-2">
+            Nome do Serviço
+          </label>
+          <input
+            type="text"
+            id="nome"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            placeholder="Digite o nome do serviço"
+            required
+          />
+        </div>
 
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Nome do Serviço"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-          className="border px-2 py-1 w-full mb-2"
-        />
-        <input
-          type="number"
-          placeholder="Preço do Serviço"
-          value={preco}
-          onChange={(e) => setPreco(e.target.value)}
-          className="border px-2 py-1 w-full"
-        />
+        <div>
+          <label htmlFor="preco" className="block text-gray-600 font-semibold mb-2">
+            Preço do Serviço
+          </label>
+          <input
+            type="number"
+            id="preco"
+            value={preco}
+            onChange={(e) => setPreco(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            placeholder="Digite o preço do serviço"
+            required
+          />
+        </div>
+
+        {errorMessage && <p className="text-red-600 text-sm mt-2">{errorMessage}</p>}
+        
         <button
-          onClick={addServico}
-          className="bg-blue-600 text-white px-4 py-2 rounded mt-2 w-full"
+          type="submit"
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
         >
           Adicionar Serviço
         </button>
-        {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-      </div>
+      </form>
 
-      <ul className="space-y-2">
+      <ul className="space-y-2 mt-4 w-full">
         {servicos.map((servico) => (
           <li key={servico.id} className="flex justify-between items-center p-2 border-b">
             <span>{servico.nome} - R$ {servico.preco.toFixed(2)}</span>
