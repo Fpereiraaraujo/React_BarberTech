@@ -5,7 +5,8 @@ import ClientLogin from "./pages/Client/ClientLogin";
 import BarberDashboard from "./pages/Barber/BarberDashboard";
 import ClientDashboard from "./pages/Client/ClientDashboard";
 import ClientSignup from "./pages/Client/ClientSignup";
-import BarberManagement from "./pages/Barber/Barbeiro"; // Importa o novo componente
+import BarberManagement from "./pages/Barber/Barbeiro";
+import ServiceManagement from "./pages/Service/ServiceManagement";
 
 function App() {
   return (
@@ -31,7 +32,13 @@ function App() {
             className="text-white font-semibold bg-green-700 px-4 py-2 rounded-md hover:bg-green-800 transition"
           >
             Gerenciar Barbeiros
-          </Link> {/* Link para a nova página de gerenciamento */}
+          </Link>
+          <Link
+            to="/service-management"
+            className="text-white font-semibold bg-teal-700 px-4 py-2 rounded-md hover:bg-teal-800 transition"
+          >
+            Gerenciar Serviços
+          </Link>
         </nav>
 
         <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
@@ -41,7 +48,8 @@ function App() {
             <Route path="/client-signup" element={<ClientSignup />} />
             <Route path="/barber-dashboard" element={<BarberDashboard />} />
             <Route path="/client-dashboard" element={<ClientDashboard />} />
-            <Route path="/management" element={<BarberManagement />} /> {/* Nova rota para gerenciamento de barbeiros */}
+            <Route path="/management" element={<BarberManagement />} />
+            <Route path="/service-management" element={<ServiceManagement />} />
           </Routes>
         </div>
       </div>
