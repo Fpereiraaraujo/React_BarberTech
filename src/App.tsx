@@ -25,7 +25,7 @@ function App() {
             to="/client-login"
             className="text-white font-semibold bg-purple-700 px-4 py-2 rounded-md hover:bg-purple-800 transition"
           >
-            Login Cliente
+            Gerenciar Clientes
           </Link>
           <Link
             to="/management"

@@ -28,18 +28,14 @@ const ClientLogin: React.FC = () => {
     }
   };
 
-  const handleSignupRedirect = () => {
-    navigate('/client-signup');
-  };
-
   return (
     <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Login do Cliente</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Gerenciar clientes</h2>
       
       <form onSubmit={handleLogin} className="w-full space-y-4">
         <div>
           <label htmlFor="email" className="block text-gray-600 font-semibold mb-2">
-            Email
+            Login
           </label>
           <input
             type="text"
@@ -47,7 +43,7 @@ const ClientLogin: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-            placeholder="Digite seu email"
+            placeholder="Digite seu login"
             required
           />
         </div>
@@ -76,16 +72,6 @@ const ClientLogin: React.FC = () => {
           Entrar
         </button>
       </form>
-
-      <div className="mt-6 text-center">
-        <p className="text-gray-600">Não tem uma conta?</p>
-        <button
-          onClick={handleSignupRedirect}
-          className="mt-2 text-blue-600 font-semibold hover:underline"
-        >
-          Criar Conta
-        </button>
-      </div>
     </div>
   );
 };

@@ -37,13 +37,13 @@ export const ClientSignup = () => {
     }
   };
 
-  const handleLoginRedirect = () => {
-    navigate('/client-login'); // Redireciona para a tela de login
+  const handleDashboardRedirect = () => {
+    navigate('/client-dashboard'); // Redireciona para a tela de login
   };
 
   return (
     <div className="flex flex-col items-center bg-white p-8 rounded-lg shadow-lg w-full max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Criação de Conta</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Cadastro de cliente</h2>
 
       <form onSubmit={handleSignup} className="w-full space-y-4">
         <div>
@@ -75,7 +75,7 @@ export const ClientSignup = () => {
             required
           />
         </div>
-        
+
         <div>
           <label htmlFor="email" className="block text-gray-600 font-semibold mb-2">
             Email
@@ -89,7 +89,7 @@ export const ClientSignup = () => {
             placeholder="Digite seu email"
             required
           />
-        </div>
+       </div>
         
         <div>
           <label htmlFor="password" className="block text-gray-600 font-semibold mb-2">
@@ -127,17 +127,16 @@ export const ClientSignup = () => {
           type="submit"
           className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
         >
-          Criar Conta
+          Cadastrar cliente
         </button>
       </form>
 
       <div className="mt-6 text-center">
-        <p className="text-gray-600">Já tem uma conta?</p>
         <button
-          onClick={handleLoginRedirect}
-          className="mt-2 text-blue-600 font-semibold hover:underline"
+          onClick={handleDashboardRedirect}
+          className="mt-2 text-red-600 font-semibold hover:underline"
         >
-          Entrar
+          Cancelar
         </button>
       </div>
     </div>
