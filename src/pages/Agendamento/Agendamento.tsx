@@ -25,13 +25,18 @@ const Agendamento: React.FC = () => {
   const handleAddAgenda = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
+      // Formatando data e hora
+      const formattedDate = new Date(dataAgendamento).toLocaleDateString('pt-BR'); // 'dd/MM/yyyy'
+      const formattedTime = horaAgendamento; // Já está no formato 'HH:mm'
+
       const response = await axios.post<Agenda>('https://localhost:5400/agenda', {
         Nome: nome,
         ClienteNome: clienteNome,
-        DataAgendamento: dataAgendamento,
-        HoraAgendamento: horaAgendamento,
+        DataAgendamento: formattedDate,
+        HoraAgendamento: formattedTime,
         ServicoConcluido: false, // Inicializa como falso no cadastro
       });
+
       setAgendas([...agendas, response.data]);
       setNome('');
       setClienteNome('');
@@ -64,7 +69,6 @@ const Agendamento: React.FC = () => {
       console.error(err);
     }
   };
-  //teste
 
   const handleEditAgenda = (agenda: Agenda) => {
     setEditingAgenda(agenda);
@@ -80,11 +84,14 @@ const Agendamento: React.FC = () => {
     if (!editingAgenda) return;
 
     try {
+      const formattedDate = new Date(dataAgendamento).toLocaleDateString('pt-BR');
+      const formattedTime = horaAgendamento;
+
       const response = await axios.put<Agenda>(`https://localhost:5400/agenda/${editingAgenda.id}`, {
         Nome: nome,
         ClienteNome: clienteNome,
-        DataAgendamento: dataAgendamento,
-        HoraAgendamento: horaAgendamento,
+        DataAgendamento: formattedDate,
+        HoraAgendamento: formattedTime,
         ServicoConcluido: status, // Update with the selected status
       });
 
@@ -162,13 +169,13 @@ const Agendamento: React.FC = () => {
             Hora do Agendamento
           </label>
           <input
-  type="time"
-  id="horaAgendamento"
-  value={horaAgendamento} // 'HH:mm' (sem os segundos)
-  onChange={(e) => setHoraAgendamento(e.target.value + ":00")} // Adiciona os segundos automaticamente
-  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-/>
-
+            type="time"
+            id="horaAgendamento"
+            value={horaAgendamento}
+            onChange={(e) => setHoraAgendamento(e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+            required
+          />
         </div>
 
         {/* Exibir o campo de status apenas quando estiver editando */}
@@ -193,73 +200,54 @@ const Agendamento: React.FC = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg mt-4"
         >
           {editingAgenda ? 'Atualizar Agendamento' : 'Adicionar Agendamento'}
         </button>
       </form>
 
-      <button
-        onClick={handleListAgendas}
-        className="mt-4 w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition"
-      >
-        Listar Agendamentos
-      </button>
+      <div className="mt-8 w-full">
+        <input
+          type="text"
+          placeholder="Filtrar por nome do cliente"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+        />
 
-      {showList && (
-        <>
-          <input
-            type="text"
-            placeholder="Filtrar pelo nome do cliente"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="mt-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-          />
-          <button
-            onClick={() => setShowList(false)}
-            className="mt-2 w-full bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-700 transition"
-          >
-            Esconder Lista
-          </button>
-        </>
-      )}
+        <button
+          onClick={handleListAgendas}
+          className="w-full mt-4 bg-purple-500 text-white py-2 rounded-lg"
+        >
+          Listar Agendamentos
+        </button>
 
-      {showList && (
-        <div className="mt-6 w-full">
-          <h3 className="text-xl font-bold text-white mb-4">Lista de Agendamentos</h3>
-          <ul className="bg-white rounded-lg shadow-md p-4">
-            {filteredAgendas.map((agenda) => (
-              <li key={agenda.id} className="flex justify-between items-center border-b py-2">
-                <div className="flex flex-col">
-                  <span className="text-gray-800">
-                    Cliente: {agenda.clienteNome}
-                  </span>
-                  <span className="text-gray-600 text-sm">
-                    Data: {agenda.dataAgendamento} às {agenda.horaAgendamento}
-                  </span>
-                  <span className="text-gray-600 text-sm">
-                    Status: {agenda.servicoConcluido ? 'Concluído' : 'Aguardando'}
-                  </span>
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEditAgenda(agenda)}
-                    className="bg-yellow-500 text-white font-semibold py-1 px-3 rounded-lg hover:bg-yellow-600"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDeleteAgenda(agenda.id)}
-                    className="bg-red-500 text-white font-semibold py-1 px-3 rounded-lg hover:bg-red-600"
-                  >
-                    Deletar
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+        {showList && (
+          <div className="mt-4">
+            <ul>
+              {filteredAgendas.map(agenda => (
+                <li key={agenda.id} className="flex justify-between items-center border-b py-2">
+                  <span>{agenda.clienteNome} - {agenda.dataAgendamento} {agenda.horaAgendamento}</span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEditAgenda(agenda)}
+                      className="text-yellow-600 hover:text-yellow-800"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleDeleteAgenda(agenda.id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Deletar
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
