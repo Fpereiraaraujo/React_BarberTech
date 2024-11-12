@@ -1,12 +1,14 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { Link } from "react-router-dom";
-import BarberLogin from "./pages/Barber/BarberLogin";
-import ClientLogin from "./pages/Client/ClientLogin";
-import BarberDashboard from "./pages/Barber/BarberDashboard";
-import ClientDashboard from "./pages/Client/ClientDashboard";
-import ClientSignup from "./pages/Client/ClientSignup";
-import BarberManagement from "./pages/Barber/Barbeiro";
-import ServiceManagement from "./pages/Service/ServiceManagement";
+import BarberLogin from "./Barber/BarberLogin";
+import ClientLogin from "./Client/ClientLogin";
+import BarberDashboard from "./Barber/BarberDashboard";
+import ClientDashboard from "./Client/ClientDashboard";
+import ClientSignup from "./Client/ClientSignup";
+import BarberManagement from "./Barber/Barbeiro";
+import ServiceManagement from "./Service/ServiceManagement";
+import React from "react";
+import Agendamento from "./Agendamento/Agendamento";
 
 function App() {
   return (
@@ -39,6 +41,10 @@ function App() {
           >
             Gerenciar Serviços
           </Link>
+
+          <Link to="/Agenda-Dashbord" className="text-white font-semibold bg-teal-700 px-4 py-2 rounded-md hover:bg-teal-800 transition">
+            Agendamento
+          </Link>
         </nav>
 
         <div className="w-full max-w-md p-8 bg-white shadow-lg rounded-lg">
@@ -50,6 +56,7 @@ function App() {
             <Route path="/client-dashboard" element={<ClientDashboard />} />
             <Route path="/management" element={<BarberManagement />} />
             <Route path="/service-management" element={<ServiceManagement />} />
+            <Route path="/Agenda-Dashbord" element={<Agendamento/>}/>
           </Routes>
         </div>
       </div>
