@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
+// Definindo o tipo de um barbeiro
 interface Barber {
   id: number;
   nome: string;
@@ -8,14 +9,17 @@ interface Barber {
 }
 
 const BarberManagement: React.FC = () => {
-  const [barbers, setBarbers] = useState<Barber[]>([]);
-  const [name, setName] = useState<string>('');
-  const [specialty, setSpecialty] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [filter, setFilter] = useState<string>(''); 
-  const [showList, setShowList] = useState<boolean>(false); 
-  const [error, setError] = useState<string>('');
+  const [barbers, setBarbers] = useState<Barber[]>([]); // Lista de barbeiros
+  const [name, setName] = useState<string>(''); // Nome do barbeiro
+  const [specialty, setSpecialty] = useState<string>(''); // Especialidade
+  const [password, setPassword] = useState<string>(''); // Senha
+  const [filter, setFilter] = useState<string>(''); // Filtro para listar
+  const [showList, setShowList] = useState<boolean>(false); // Exibir lista
+  const [error, setError] = useState<string>(''); // Mensagem de erro
+  const [editMode, setEditMode] = useState<boolean>(false); // Para controle do modo de edição
+  const [selectedBarber, setSelectedBarber] = useState<Barber | null>(null); // Barbeiro selecionado para edição
 
+  // Função para adicionar barbeiro
   const handleAddBarber = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -37,17 +41,19 @@ const BarberManagement: React.FC = () => {
     }
   };
 
+  // Função para listar barbeiros
   const handleListBarbers = async () => {
     try {
       const response = await axios.get<Barber[]>('https://localhost:5400/barbeiro');
       setBarbers(response.data);
-      setShowList(true); // Mostra a lista após buscar
+      setShowList(true);
     } catch (err) {
       setError('Erro ao carregar barbeiros');
       console.error(err);
     }
   };
 
+  // Função para deletar barbeiro
   const handleDeleteBarber = async (nome: string) => {
     try {
       await axios.delete(`https://localhost:5400/barbeiro/${nome}`);
@@ -58,13 +64,65 @@ const BarberManagement: React.FC = () => {
     }
   };
 
+  // Função para atualizar barbeiro
+  const handleUpdateBarber = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!selectedBarber) return; // Se não houver barbeiro selecionado, não faz nada
+
+    try {
+      const response = await axios.put<Barber>(`https://localhost:5400/barbeiro/${selectedBarber.nome}`, {
+        Nome: name,
+        Especialidade: specialty,
+        Senha: password,
+      });
+
+      setBarbers(barbers.map(barber =>
+        barber.id === response.data.id ? response.data : barber
+      ));
+
+      setName('');
+      setSpecialty('');
+      setPassword('');
+      setEditMode(false); // Desativando o modo de edição
+      setSelectedBarber(null); // Limpa o barbeiro selecionado
+      setError('');
+    } catch (err) {
+      console.error('Erro ao atualizar barbeiro:', err);
+
+      // Verifica se o erro é do tipo AxiosError
+      if (err instanceof AxiosError) {
+        if (err.response) {
+          // Caso a resposta da API contenha um erro
+          setError(`Erro ao atualizar barbeiro: ${err.response.data || err.response.statusText}`);
+        } else {
+          // Caso não haja resposta da API
+          setError('Erro ao atualizar barbeiro. Sem resposta da API.');
+        }
+      } else {
+        // Caso o erro não seja do tipo AxiosError
+        setError('Erro ao atualizar barbeiro. Verifique os dados.');
+      }
+    }
+  };
+
+  // Função para preencher os campos de edição
+  const handleEditBarber = (barber: Barber) => {
+    setName(barber.nome);
+    setSpecialty(barber.especialidade);
+    setPassword(''); // Senha não é obrigatória para edição
+    setSelectedBarber(barber); // Define o barbeiro a ser editado
+    setEditMode(true); // Ativa o modo de edição
+  };
+
+  // Filtrar os barbeiros
   const filteredBarbers = barbers.filter(barber =>
     barber.nome.toLowerCase().includes(filter.toLowerCase())
   );
 
   useEffect(() => {
     if (name || specialty || password) {
-      setError('');
+      setError(''); // Limpa o erro quando o usuário digitar
     }
   }, [name, specialty, password]);
 
@@ -72,7 +130,8 @@ const BarberManagement: React.FC = () => {
     <div className="flex flex-col items-center bg-gradient-to-br from-blue-500 to-purple-600 p-8 rounded-lg shadow-lg w-full max-w-md mx-auto mt-10">
       <h2 className="text-2xl font-bold text-white mb-6">Gerenciamento de Barbeiros</h2>
 
-      <form onSubmit={handleAddBarber} className="w-full space-y-4 bg-white p-6 rounded-lg shadow-md">
+      {/* Formulário de Adicionar ou Editar */}
+      <form onSubmit={editMode ? handleUpdateBarber : handleAddBarber} className="w-full space-y-4 bg-white p-6 rounded-lg shadow-md">
         <div>
           <label htmlFor="name" className="block text-gray-600 font-semibold mb-2">
             Nome do Barbeiro
@@ -114,20 +173,20 @@ const BarberManagement: React.FC = () => {
             onChange={(e) => setPassword(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
             placeholder="Digite a senha"
-            required
           />
         </div>
 
         {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
-        
+
         <button
           type="submit"
           className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition"
         >
-          Adicionar Barbeiro
+          {editMode ? 'Atualizar Barbeiro' : 'Adicionar Barbeiro'}
         </button>
       </form>
 
+      {/* Listagem de barbeiros */}
       <button
         onClick={handleListBarbers}
         className="mt-4 w-full bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition"
@@ -145,7 +204,7 @@ const BarberManagement: React.FC = () => {
             className="mt-4 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
           />
           <button
-            onClick={() => setShowList(false)} // Ocultar a lista
+            onClick={() => setShowList(false)} // Esconder a lista
             className="mt-2 w-full bg-red-600 text-white font-semibold py-2 rounded-lg hover:bg-red-700 transition"
           >
             Esconder Lista
@@ -160,12 +219,20 @@ const BarberManagement: React.FC = () => {
             {filteredBarbers.map((barber) => (
               <li key={barber.id} className="flex justify-between items-center border-b py-2">
                 <span className="text-gray-800">{barber.nome} - {barber.especialidade}</span>
-                <button
-                  onClick={() => handleDeleteBarber(barber.nome)} // Passando o nome
-                  className="text-red-600 hover:text-red-800 transition"
-                >
-                  Deletar
-                </button>
+                <div>
+                  <button
+                    onClick={() => handleEditBarber(barber)} // Edita o barbeiro
+                    className="text-blue-600 hover:text-blue-800 transition mx-2"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDeleteBarber(barber.nome)} // Deleta o barbeiro
+                    className="text-red-600 hover:text-red-800 transition"
+                  >
+                    Deletar
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
